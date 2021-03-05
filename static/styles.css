@@ -30,12 +30,104 @@ li {
   padding: 40px;
 }
 
+.table {
+  width: 800px;
+  border-bottom: 1px solid #000;
+  border-right: 1px solid #000000;
+  background-color: #fff;
+}
+
+.row {
+  display: flex;
+}
+
+.num {
+  width: 40px;
+}
+
+.name {
+  width: 200px;
+}
+.balance {
+  width: 140px;
+}
+.mail {
+  width: 250px;
+}
+.button-active {
+  width: 110px;
+}
+.button-arrow {
+  width: 60px;
+}
+.childs {
+  background-color: #808080;
+}
+.cell {
+  border-top: 1px solid #000000;
+  border-left: 1px solid #000000;
+  padding: 10px;
+  text-align: center;
+}
+
+.not-active {
+  color: #d4b8b8;
+}
+
+.active {
+  height: 20px;
+  padding: 2px;
+  margin-right: 10px;
+  align-self: center;
+  border: 1px solid black;
+  border-radius: 2px;
+  background-color: #5fe86ac2;
+  cursor: pointer;
+  outline: none;
+}
+
+.active__hide {
+  background-color: #ff7676b0;
+}
+.hide {
+  display: none;
+}
+.not-show {
+  display: none;
+}
+.arrow {
+  width: 20px;
+  height: 20px;
+  align-self: center;
+  background-color: #002b7152;
+  background-image: url(../img/arrow.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  border: 1px solid black;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  transform: rotate(90deg);
+  transition-duration: 300ms;
+}
+
+.arrow__hide {
+  transform: rotate(0deg);
+  transition-duration: 300ms;
+}
+/* .parent-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .border {
   border: 1px solid black;
   border-radius: 5px;
 }
 
 .parent {
+  display: flex;
+  justify-content: space-between;
   width: 500px;
   font-size: 16px;
   padding: 5px 20px;
@@ -59,6 +151,8 @@ li {
 .name__heading {
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
+  width: 70%;
 }
 
 .name {
@@ -74,8 +168,6 @@ li {
 .info {
   display: flex;
   justify-content: space-between;
-  padding: 5px 10px;
-  margin-bottom: 5px;
   background-color: #fff;
 }
 
@@ -84,9 +176,9 @@ li {
 }
 
 .active {
+  height: 20px;
   padding: 2px;
   margin-right: 10px;
-  height: 20px;
   align-self: center;
   border: 1px solid black;
   border-radius: 2px;
@@ -105,12 +197,12 @@ li {
   width: 20px;
   height: 20px;
   align-self: center;
+  background-color: #002b7152;
   background-image: url(../img/arrow.png);
   background-repeat: no-repeat;
   background-position: center;
   border: 1px solid black;
   border-radius: 2px;
-  background-color: #002b7152;
   cursor: pointer;
   outline: none;
   transform: rotate(90deg);
@@ -121,3 +213,4 @@ li {
   transform: rotate(0deg);
   transition-duration: 300ms;
 }
+ */

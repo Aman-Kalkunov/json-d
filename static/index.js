@@ -5,95 +5,95 @@ function initHTML() {
   fetch('static/default.json')
     .then(response => response.json())
     .then(data => {
-      const list = document.querySelector(".parent-list");
-      const arrayParents = getArrayParents(data);
-      list.innerHTML = getParentList(arrayParents);
+      const list = document.querySelector(".table");
+      const table = getParentList(data);
+      list.appendChild(table);
     });
 }
 
-let table = document.querySelector(".parent-list");
+function getParentList(array) {
+  let parents = document.createElement('ul');
+  parents.className = "body";
+
+  array.map(item => {
+    findParent(item, parents, array)
+  });
+  return parents;
+}
+
+function findParent(item, parents, array) {
+  if (item.parentId === 0) {
+    const parent = createItem(item, parents);
+    parents.innerHTML += parent;
+  } else {
+    const childsFolder = parents.getElementsByClassName(`${item.parentId}`)[0];
+    if (!childsFolder) {
+
+      let upperParent = array.find((obj) => obj.id === item.parentId)
+      findParent(upperParent, parents, array)
+    }
+    else {
+      isertItem(item, parents)
+    };
+  }
+}
+
+function isertItem(item, parents) {
+  const childsFolder = parents.getElementsByClassName(`${item.parentId}`)[0].lastElementChild;
+  const parent = createItem(item, parents);
+  childsFolder.innerHTML += parent;
+}
+
+function createItem(array, parents) {
+  let str = `
+    <li class="parent ${array.id}">
+      <div class="${array.isActive ? "row" : "row not-active"}">
+        <span class="cell num">${array.id}</span>
+        <span class="cell name">${array.name}</span>
+        <span class="cell balance">${array.balance}</span>
+        <span class="cell mail">${array.email}</span>
+        <span class="cell button-active"><button class="active">Show active</button></span>
+        <span class="cell button-arrow"><button class="arrow"></button></span>
+      </div>
+      <ul class="childs hide">
+
+      </ul>
+    </li>
+  `
+  if (parents.getElementsByClassName(array.id).length === 1) {
+    return ''
+  };
+  return str;
+}
+
+let table = document.querySelector(".table");
 table.addEventListener("click", clickButton);
 
-//Сортируем массив по parentId, возвращаем массив с массивами обьектов.
-function getArrayParents(data) {
-  const parents = data.reduce((obj, item) => {
-    const parent = item.parentId;
-    if (!obj[parent]) {
-      obj[parent] = [];
-    }
-    obj[parent].push(item);
-    return obj;
-  }, {});
-
-  return arrayParents = Object.getOwnPropertyNames(parents).map(item => parents[item]);
-};
-
-//Собираем HTML.
-//Создаем список групп.
-function getParentList(array) {
-  let parentList = '';
-
-  for (let i = 0; i < array.length; i++) {
-    const parent =
-      `
-    <li class="parent border">
-      <div class="name__heading">
-        <h2>Group number: ${array[i][0].parentId}</h2>
-        <div class="button-box">
-          <button class="active">Show active</button>
-          <button class="arrow"></button>
-        </div>
-      </div>
-      <ul class="list">
-      ${getUserList(array[i])}
-      </ul>
-    `
-    parentList += parent;
-  }
-  return parentList;
-}
-
-//Создаем список пользователей.
-function getUserList(array) {
-  let userList = '';
-
-  for (let i = 0; i < array.length; i++) {
-    const user =
-      `
-      <li class="${array[i].isActive ? "name border" : "name border not-active"}">
-        <div class="name__heading">
-          <h3>${array[i].name}</h3>
-          <div class="button-box">
-            <button class="arrow"></button>
-          </div>
-        </div>
-        <ul class="list">
-          <li class="info border"><span class="info__span">Balance: </span>${array[i].balance}</li>
-          <li class="info border"><span class="info__span">Email: </span>${array[i].email}</li>
-        </ul>
-      </li>
-    `
-    userList += user;
-  }
-  return userList;
-}
-
-//Обрабатываем клик покнопкам.
 function clickButton(event) {
   const button = event.target;
 
   if (button.classList.contains("arrow")) {
     const parentSibling = button.parentElement.parentElement.nextElementSibling;
     button.classList.toggle("arrow__hide");
-    parentSibling.classList.contains("list") ? parentSibling.classList.toggle("show") : false;
+    parentSibling.classList.toggle("hide");
   }
 
   if (button.classList.contains("active")) {
-    const parentSibling = button.parentElement.parentElement.nextElementSibling;
-    button.classList.toggle("active__hide");
-    const notActiveUser = parentSibling.querySelectorAll(".not-active");
-    for (let elem of notActiveUser) {
-      elem.classList.toggle("hide");
+    const parent = button.parentElement.parentElement.parentElement;
+    if (parent.classList.contains("title")) {
+      const parentSibling = parent.nextElementSibling;
+      button.classList.toggle("active__hide");
+      const notActiveUser = parentSibling.querySelectorAll(".not-active");
+      for (let elem of notActiveUser) {
+        elem.classList.toggle("hide");
+      }
+    } else {
+      const parentSibling = button.parentElement.parentElement.nextElementSibling;
+      button.classList.toggle("active__hide");
+      const notActiveUser = parentSibling.querySelectorAll(".not-active");
+      for (let elem of notActiveUser) {
+        elem.classList.toggle("hide");
+      }
     }
   }
 }
