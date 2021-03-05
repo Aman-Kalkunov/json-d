@@ -26,27 +26,27 @@ function findParent(item, parents, array) {
     const parent = createItem(item, parents);
     parents.innerHTML += parent;
   } else {
-    const childsFolder = parents.getElementsByClassName(`${item.parentId}`)[0];
+    const childsFolder = parents.getElementsByClassName(`parent-${item.parentId}`)[0];
     if (!childsFolder) {
 
       let upperParent = array.find((obj) => obj.id === item.parentId)
       findParent(upperParent, parents, array)
     }
     else {
-      isertItem(item, parents)
+      insertItem(item, parents)
     };
   }
 }
 
-function isertItem(item, parents) {
-  const childsFolder = parents.getElementsByClassName(`${item.parentId}`)[0].lastElementChild;
+function insertItem(item, parents) {
+  const childsFolder = parents.getElementsByClassName(`parent-${item.parentId}`)[0].lastElementChild;
   const parent = createItem(item, parents);
   childsFolder.innerHTML += parent;
 }
 
 function createItem(array, parents) {
   let str = `
-    <li class="parent ${array.id}">
+    <li class="parent parent-${array.id}">
       <div class="${array.isActive ? "row" : "row not-active"}">
         <span class="cell num">${array.id}</span>
         <span class="cell name">${array.name}</span>
