@@ -8,7 +8,6 @@ function initHTML() {
       const list = document.querySelector(".body")
       const parents = getArrayParents(data)
       list.innerHTML += addParents(parents)
-
       getChildren(data)
       removeButton()
     })
@@ -17,7 +16,6 @@ function initHTML() {
 // Проходим по массиву и создаем объект родителей с нулевым родительским id.
 function getArrayParents(data) {
   let parents = {}
-
   data.forEach((item) => {
     if (item.parentId === 0) parents[item.id] = item
     else if (item.parentId === item.id) {
@@ -25,15 +23,14 @@ function getArrayParents(data) {
       parents[item.id] = item
     }
   })
-
   return parents
 }
 
 // Выводим родителей по порядку возрастания.
-function addParents(obj) {
+function addParents(rrayParents) {
   let parents = ''
-  for (key in obj) {
-    parents += createItem(obj[key])
+  for (let key in rrayParents) {
+    parents += createItem(rrayParents[key])
   }
   return parents
 }
@@ -48,11 +45,15 @@ function getChildren(data) {
     if (item.parentId !== 0 && parent) {
       parent.querySelector('.children').innerHTML += createItem(item)
     }
-    else if (!parent && item.parentId !== 0) arrChildren.push(item)
+    else if (!parent && item.parentId !== 0) {
+      arrChildren.push(item)
+    }
   })
 
   // Если остались элементы без родителей, запускаем рекурсию только для них.
-  if (arrChildren.length) getChildren(arrChildren)
+  if (arrChildren.length) {
+    getChildren(arrChildren)
+  }
 }
 
 // Создаем ячейку таблицы.
@@ -76,10 +77,8 @@ function createItem(array) {
 // После отрисовки всех элементов убираем кнопки у тех, кто не имеет дочерних.
 function removeButton() {
   const parents = document.querySelectorAll('.parent')
-
   parents.forEach(item => {
     const childFolder = item.querySelector('.children')
-
     if (childFolder.children.length === 0) {
       item.querySelector(".button-arrow").innerHTML = ''
     }
