@@ -27,10 +27,10 @@ function getArrayParents(data) {
 }
 
 // Выводим родителей по порядку возрастания.
-function addParents(rrayParents) {
+function addParents(arrayParents) {
   let parents = ''
-  for (let key in rrayParents) {
-    parents += createItem(rrayParents[key])
+  for (let key in arrayParents) {
+    parents += createItem(arrayParents[key])
   }
   return parents
 }
