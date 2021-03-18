@@ -1,99 +1,109 @@
-initHTML();
+initHTML()
 
-//Получаем данные и на их основе отображаем список пользователей. 
+// Получаем данные и на их основе отображаем список пользователей. 
 function initHTML() {
-  fetch('static/default.json')
+  fetch('static/2000.json')
     .then(response => response.json())
     .then(data => {
-      const list = document.querySelector(".table");
-      const table = getParentList(data);
-      list.appendChild(table);
-    });
+      const list = document.querySelector(".body")
+      const parents = getArrayParents(data)
+      list.innerHTML += addParents(parents)
+
+      getChildren(data)
+      removeButton()
+    })
 }
 
-function getParentList(array) {
-  let parents = document.createElement('ul');
-  parents.className = "body";
+// Проходим по массиву и создаем объект родителей с нулевым родительским id.
+function getArrayParents(data) {
+  let parents = {}
 
-  array.map(item => {
-    findParent(item, parents, array)
-  });
-  return parents;
-}
-
-function findParent(item, parents, array) {
-  if (item.parentId === 0) {
-    const parent = createItem(item, parents);
-    parents.innerHTML += parent;
-  } else {
-    const childsFolder = parents.getElementsByClassName(`parent-${item.parentId}`)[0];
-    if (!childsFolder) {
-
-      let upperParent = array.find((obj) => obj.id === item.parentId)
-      findParent(upperParent, parents, array)
+  data.forEach((item) => {
+    if (item.parentId === 0) parents[item.id] = item
+    else if (item.parentId === item.id) {
+      item.parentId = 0
+      parents[item.id] = item
     }
-    else {
-      insertItem(item, parents)
-    };
+  })
+
+  return parents
+}
+
+// Выводим родителей по порядку возрастания.
+function addParents(obj) {
+  let parents = ''
+  for (key in obj) {
+    parents += createItem(obj[key])
   }
+  return parents
 }
 
-function insertItem(item, parents) {
-  const childsFolder = parents.getElementsByClassName(`parent-${item.parentId}`)[0].lastElementChild;
-  const parent = createItem(item, parents);
-  childsFolder.innerHTML += parent;
+// Проходим по массиву повторно
+function getChildren(data) {
+  const arrChildren = []
+
+  data.forEach((item) => {
+    const parent = document.getElementById(`${item.parentId}`)
+
+    if (item.parentId !== 0 && parent) {
+      parent.querySelector('.children').innerHTML += createItem(item)
+    }
+    else if (!parent && item.parentId !== 0) arrChildren.push(item)
+  })
+
+  // Если остались элементы без родителей, запускаем рекурсию только для них.
+  if (arrChildren.length) getChildren(arrChildren)
 }
 
-function createItem(array, parents) {
-  let str = `
-    <li class="parent parent-${array.id}">
-      <div class="${array.isActive ? "row" : "row not-active"}">
+// Создаем ячейку таблицы.
+function createItem(array) {
+  const item = `
+    <li id="${array.id}" class="parent">
+      <div class="${array.isActive ? "row" : "row not-active not-active_red"}">
         <span class="cell num">${array.id}</span>
         <span class="cell name">${array.name}</span>
         <span class="cell balance">${array.balance}</span>
         <span class="cell mail">${array.email}</span>
-        <span class="cell button-active"><button class="active">Show active</button></span>
+        <span class="cell button-active">${array.isActive ? "Active" : "Not-Active"}</span>
         <span class="cell button-arrow"><button class="arrow"></button></span>
       </div>
-      <ul class="childs hide">
-
-      </ul>
+      <ul class="children hide"></ul>
     </li>
   `
-  if (parents.getElementsByClassName(array.id).length === 1) {
-    return ''
-  };
-  return str;
+  return item
 }
 
-let table = document.querySelector(".table");
-table.addEventListener("click", clickButton);
+// После отрисовки всех элементов убираем кнопки у тех, кто не имеет дочерних.
+function removeButton() {
+  const parents = document.querySelectorAll('.parent')
+
+  parents.forEach(item => {
+    const childFolder = item.querySelector('.children')
+
+    if (childFolder.children.length === 0) {
+      item.querySelector(".button-arrow").innerHTML = ''
+    }
+  })
+}
+
+// Работа кнопок
+const table = document.querySelector(".table")
+table.addEventListener("click", clickButton)
 
 function clickButton(event) {
-  const button = event.target;
+  const button = event.target
+  const isArrow = button.classList.contains("arrow")
+  const isActive = button.classList.contains("active")
 
-  if (button.classList.contains("arrow")) {
-    const parentSibling = button.parentElement.parentElement.nextElementSibling;
-    button.classList.toggle("arrow__hide");
-    parentSibling.classList.toggle("hide");
+  if (isArrow) {
+    const parentSibling = button.parentElement.parentElement.nextElementSibling
+    button.classList.toggle("arrow__hide")
+    parentSibling.classList.toggle("hide")
   }
 
-  if (button.classList.contains("active")) {
-    const parent = button.parentElement.parentElement.parentElement;
-    if (parent.classList.contains("title")) {
-      const parentSibling = parent.nextElementSibling;
-      button.classList.toggle("active__hide");
-      const notActiveUser = parentSibling.querySelectorAll(".not-active");
-      for (let elem of notActiveUser) {
-        elem.classList.toggle("hide");
-      }
-    } else {
-      const parentSibling = button.parentElement.parentElement.nextElementSibling;
-      button.classList.toggle("active__hide");
-      const notActiveUser = parentSibling.querySelectorAll(".not-active");
-      for (let elem of notActiveUser) {
-        elem.classList.toggle("hide");
-      }
-    }
+  if (isActive) {
+    button.classList.toggle("active__hide")
+    const notActiveUser = document.querySelectorAll('.not-active')
+    for (let elem of notActiveUser) elem.classList.toggle("not-active_red")
   }
 }
